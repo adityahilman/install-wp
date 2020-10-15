@@ -1,6 +1,6 @@
 WORDPRESS_URL="https://wordpress.org/latest.tar.gz"
 
-WORKDIR="./"
+WORKDIR="htdocs"
 #WORKDIR="/opt/htdocs/vhost/"
 
 echo "Input New Domain: "
@@ -10,12 +10,14 @@ if [ -d "$WORKDIR/$NEW_DOMAIN" ]; then
     echo "Domain already exist" 
     exit 1
 else
-    echo "Creating WP DocRoot $WORKDIR/$NEW_DOMAIN"
-    mkdir -p $WORKDIR/$NEW_DOMAIN
+    # echo "Creating WP DocRoot $WORKDIR/$NEW_DOMAIN"
+    # mkdir -p $WORKDIR/$NEW_DOMAIN
+
     echo "Downloading Wordpress"
     #wget $WORDPRESS_URL
     tar zxf latest.tar.gz
-    mv wordpress/* $NEW_DOMAIN
+    rm latest.tar.gz
+    mv wordpress $NEW_DOMAIN
 
     echo "=== Installing Wordpress ==="
 
@@ -49,11 +51,12 @@ else
     s/put your unique phrase here/salt()/ge
     ' $NEW_DOMAIN/wp-config.php
 
+    # move newsite to workdir
+    mv $NEW_DOMAIN $WORKDIR
+
     echo "Installing Apache config"
     cp apache-wp.conf $NEW_DOMAIN.conf
     sed -e "s/NEW_DOMAIN/$NEW_DOMAIN/" apache-wp.conf > $NEW_DOMAIN.conf
-
-    #sed -i "s/NEW_DOMAIN/$NEW_DOMAIN/" $NEW_DOMAIN.conf
 
 
 
